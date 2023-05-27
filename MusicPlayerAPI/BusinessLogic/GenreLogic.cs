@@ -1,54 +1,92 @@
-﻿using MusicPlayerAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicPlayerAPI.Data;
+using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicPlayerAPI.BusinessLogic
 {
-    public class MusicLogic
+    public class GenreLogic
     {
         private readonly MusicPlayerContext _context;
+        private readonly IMusic _music;
 
-        public MusicLogic(MusicPlayerContext context)
+        public GenreLogic(MusicPlayerContext context, IMusic music)
         {
             _context = context;
+            _music = music;
+        }
+        public List<Genres> GetGenres()
+        {
+            try
+            {
+                var Genres = _context.Genres.Select(x => x).ToList();
+                return Genres;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        public Genres GetGenre(int id)
+        {
+            try
+            {
+                var Genre = _context.Genres.Where(x => x.Id == id).Select(x => x).First();
+                return Genre;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        //public Genres AddGenre(int id)
+        //{
+        //    try
+        //    {
+        //        var Genre = _context.Genres.Where(x => x.Id == id).Select(x => x).First();
+        //        return Genre;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        return null;
+        //    }
+        //}
+        public bool AddGenre(Genres Genre)
+        {
+
+            try
+            {
+                _context.Genres.Add(Genre);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+        public bool UpdateGenre(Genres Genre)
+        {
+            try
+            {
+                _context.Genres.Update(Genre);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
         }
 
-        public List<Music> GetMusic()
+        public bool RemoveGenre(Genres Genre)
         {
             try
             {
-                var music = _context.Music.Select(x => x).ToList();
-                return music;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
-        public Music GetContact(int id)
-        {
-            try
-            {
-                var music = _context.Music.Find(id);
-                return music;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
-        public bool AddContact(Music contact)
-        {
-            
-            try
-            {
-                _context.Music.Add(contact);
+                _context.Genres.Remove(Genre);
                 return true;
             }
             catch (Exception ex)
@@ -56,33 +94,6 @@ namespace MusicPlayerAPI.BusinessLogic
                 Console.WriteLine(ex);
                 return false;
             }
-        }
-        public bool UpdateContact(Music contact)
-        {
-            try
-            {
-                _context.Music.Update(contact);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-        }
-        public bool RemoveContact(Music contact)
-        {
-            try
-            {
-                _context.Music.Remove(contact);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-            
         }
     }
 }

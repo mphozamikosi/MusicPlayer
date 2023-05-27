@@ -8,48 +8,48 @@ using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
 
-namespace MusicPlayerAPI.Controllers
+namespace GenresPlayerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MusicController : ControllerBase
+    public class GenresController : ControllerBase
     {
         private readonly MusicPlayerContext _context;
 
-        public MusicController(MusicPlayerContext context)
+        public GenresController(MusicPlayerContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Music>>> GetMusic()
+        public async Task<ActionResult<IEnumerable<Genres>>> GetGenres()
         {
-            return await _context.Music.ToListAsync();
+            return await _context.Genres.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Music>> GetMusic(int id)
+        public async Task<ActionResult<Genres>> GetGenres(int id)
         {
-            var Music = await _context.Music.FindAsync(id);
+            var Genres = await _context.Genres.FindAsync(id);
 
-            if (Music == null)
+            if (Genres == null)
             {
                 return NotFound();
             }
 
-            return Music;
+            return Genres;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMusic(int id, Music Music)
+        public async Task<IActionResult> PutGenres(int id, Genres Genres)
         {
-            Music.UpdatedDate = DateTime.Now.ToString();
-            if (id != Music.Id)
+            Genres.UpdatedDate = DateTime.Now;
+            if (id != Genres.Id)
             {
                 return BadRequest();
             }
 
-            //_context.Entry(Music).State = EntityState.Modified;
+            //_context.Entry(Genres).State = EntityState.Modified;
 
             //try
             //{
@@ -57,7 +57,7 @@ namespace MusicPlayerAPI.Controllers
             //}
             //catch (DbUpdateConcurrencyException)
             //{
-            //    if (!MusicExists(id))
+            //    if (!GenresExists(id))
             //    {
             //        return NotFound();
             //    }
@@ -71,18 +71,18 @@ namespace MusicPlayerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Music>> PostMusic(Music Music)
+        public async Task<ActionResult<Genres>> PostGenres(Genres Genres)
         {
-            //Music.Id = 3;
-            Music.UpdatedDate = DateTime.Now.ToString();
-            _context.Music.Add(Music);
+            //Genres.Id = 3;
+            Genres.UpdatedDate = DateTime.Now;
+            _context.Genres.Add(Genres);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (MusicExists(Music.Id))
+                if (GenresExists(Genres.Id))
                 {
                     return Conflict();
                 }
@@ -92,18 +92,18 @@ namespace MusicPlayerAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMusic", new { id = Music.Id }, Music);
+            return CreatedAtAction("GetGenres", new { id = Genres.Id }, Genres);
         }
 
-        [Route("PostMultipleMusic")]
+        [Route("PostMultipleGenres")]
         [HttpPost]
-        public async Task<ActionResult<Music>> PostMultipleMusic(Music[] Music)
+        public async Task<ActionResult<Genres>> PostMultipleGenres(Genres[] Genres)
         {
-            //Music.Id = 3;
-            foreach (var item in Music)
+            //Genres.Id = 3;
+            foreach (var item in Genres)
             {
-                item.UpdatedDate = DateTime.Now.ToString();
-                _context.Music.Add(item);
+                item.UpdatedDate = DateTime.Now;
+                _context.Genres.Add(item);
             }
 
 
@@ -113,9 +113,9 @@ namespace MusicPlayerAPI.Controllers
             //}
             //catch (DbUpdateException)
             //{
-            //    foreach (var item in Music)
+            //    foreach (var item in Genres)
             //    {
-            //        if (MusicExists(item.Id))
+            //        if (GenresExists(item.Id))
             //        {
             //            return Conflict();
             //        }
@@ -130,23 +130,23 @@ namespace MusicPlayerAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Music>> DeleteMusic(int id)
+        public async Task<ActionResult<Genres>> DeleteGenres(int id)
         {
-            var Music = await _context.Music.FindAsync(id);
-            if (Music == null)
+            var Genres = await _context.Genres.FindAsync(id);
+            if (Genres == null)
             {
                 return NotFound();
             }
 
-            _context.Music.Remove(Music);
+            _context.Genres.Remove(Genres);
             await _context.SaveChangesAsync();
 
-            return Music;
+            return Genres;
         }
 
-        private bool MusicExists(int id)
+        private bool GenresExists(int id)
         {
-            return _context.Music.Any(e => e.Id == id);
+            return _context.Genres.Any(e => e.Id == id);
         }
     }
 }
