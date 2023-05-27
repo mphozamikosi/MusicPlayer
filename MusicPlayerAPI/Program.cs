@@ -1,4 +1,4 @@
-using API.Data;
+using MusicPlayerAPI.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;

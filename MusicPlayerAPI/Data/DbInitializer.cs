@@ -1,9 +1,9 @@
-﻿using API.Models;
+﻿using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Models;
 using System;
 using System.Linq;
 
-namespace API.Data
+namespace MusicPlayerAPI.Data
 {
     public static class DbInitializer
     {

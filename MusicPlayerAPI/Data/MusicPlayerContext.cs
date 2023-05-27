@@ -1,11 +1,11 @@
-﻿using API.Models;
+﻿using MusicPlayerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace API.Data
+namespace MusicPlayerAPI.Data
 {
     public class MusicPlayerContext : DbContext
     {

@@ -8,48 +8,48 @@ using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
 
-namespace MusicPlayerAPI.Controllers
+namespace AlbumsPlayerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MusicController : ControllerBase
+    public class AlbumsController : ControllerBase
     {
         private readonly MusicPlayerContext _context;
 
-        public MusicController(MusicPlayerContext context)
+        public AlbumsController(MusicPlayerContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Music>>> GetMusic()
+        public async Task<ActionResult<IEnumerable<Albums>>> GetAlbums()
         {
-            return await _context.Music.ToListAsync();
+            return await _context.Albums.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Music>> GetMusic(int id)
+        public async Task<ActionResult<Albums>> GetAlbums(int id)
         {
-            var Music = await _context.Music.FindAsync(id);
+            var Albums = await _context.Albums.FindAsync(id);
 
-            if (Music == null)
+            if (Albums == null)
             {
                 return NotFound();
             }
 
-            return Music;
+            return Albums;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMusic(int id, Music Music)
+        public async Task<IActionResult> PutAlbums(int id, Albums Albums)
         {
-            Music.UpdatedDate = DateTime.Now.ToString();
-            if (id != Music.Id)
+            Albums.UpdatedDate = DateTime.Now;
+            if (id != Albums.Id)
             {
                 return BadRequest();
             }
 
-            //_context.Entry(Music).State = EntityState.Modified;
+            //_context.Entry(Albums).State = EntityState.Modified;
 
             //try
             //{
@@ -57,7 +57,7 @@ namespace MusicPlayerAPI.Controllers
             //}
             //catch (DbUpdateConcurrencyException)
             //{
-            //    if (!MusicExists(id))
+            //    if (!AlbumsExists(id))
             //    {
             //        return NotFound();
             //    }
@@ -71,18 +71,18 @@ namespace MusicPlayerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Music>> PostMusic(Music Music)
+        public async Task<ActionResult<Albums>> PostAlbums(Albums Albums)
         {
-            //Music.Id = 3;
-            Music.UpdatedDate = DateTime.Now.ToString();
-            _context.Music.Add(Music);
+            //Albums.Id = 3;
+            Albums.UpdatedDate = DateTime.Now;
+            _context.Albums.Add(Albums);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (MusicExists(Music.Id))
+                if (AlbumsExists(Albums.Id))
                 {
                     return Conflict();
                 }
@@ -92,18 +92,18 @@ namespace MusicPlayerAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMusic", new { id = Music.Id }, Music);
+            return CreatedAtAction("GetAlbums", new { id = Albums.Id }, Albums);
         }
 
-        [Route("PostMultipleMusic")]
+        [Route("PostMultipleAlbums")]
         [HttpPost]
-        public async Task<ActionResult<Music>> PostMultipleMusic(Music[] Music)
+        public async Task<ActionResult<Albums>> PostMultipleAlbums(Albums[] Albums)
         {
-            //Music.Id = 3;
-            foreach (var item in Music)
+            //Albums.Id = 3;
+            foreach (var item in Albums)
             {
-                item.UpdatedDate = DateTime.Now.ToString();
-                _context.Music.Add(item);
+                item.UpdatedDate = DateTime.Now;
+                _context.Albums.Add(item);
             }
 
 
@@ -113,9 +113,9 @@ namespace MusicPlayerAPI.Controllers
             //}
             //catch (DbUpdateException)
             //{
-            //    foreach (var item in Music)
+            //    foreach (var item in Albums)
             //    {
-            //        if (MusicExists(item.Id))
+            //        if (AlbumsExists(item.Id))
             //        {
             //            return Conflict();
             //        }
@@ -130,23 +130,23 @@ namespace MusicPlayerAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Music>> DeleteMusic(int id)
+        public async Task<ActionResult<Albums>> DeleteAlbums(int id)
         {
-            var Music = await _context.Music.FindAsync(id);
-            if (Music == null)
+            var Albums = await _context.Albums.FindAsync(id);
+            if (Albums == null)
             {
                 return NotFound();
             }
 
-            _context.Music.Remove(Music);
+            _context.Albums.Remove(Albums);
             await _context.SaveChangesAsync();
 
-            return Music;
+            return Albums;
         }
 
-        private bool MusicExists(int id)
+        private bool AlbumsExists(int id)
         {
-            return _context.Music.Any(e => e.Id == id);
+            return _context.Albums.Any(e => e.Id == id);
         }
     }
 }

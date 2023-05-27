@@ -1,28 +1,26 @@
 ﻿using MusicPlayerAPI.Data;
+using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicPlayerAPI.BusinessLogic
 {
-    public class MusicLogic
+    public class SongLogic
     {
         private readonly MusicPlayerContext _context;
+        private readonly IMusic _music;
 
-        public MusicLogic(MusicPlayerContext context)
+        public SongLogic(MusicPlayerContext context, IMusic music)
         {
             _context = context;
+            _music = music;
         }
 
-        public List<Music> GetMusic()
+        public List<Songs> GetSongs()
         {
             try
             {
-                var music = _context.Music.Select(x => x).ToList();
-                return music;
+                var Songs = _context.Songs.Select(x => x).ToList();
+                return Songs;
             }
             catch (Exception ex)
             {
@@ -30,12 +28,12 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public Music GetContact(int id)
+        public Songs GetSong(int id)
         {
             try
             {
-                var music = _context.Music.Find(id);
-                return music;
+                var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).First();
+                return Song;
             }
             catch (Exception ex)
             {
@@ -43,12 +41,24 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public bool AddContact(Music contact)
+        //public Songs AddSong(int id)
+        //{
+        //    try
+        //    {
+        //        var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).First();
+        //        return Song;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        return null;
+        //    }
+        //}
+        public bool AddSong(Songs Song)
         {
-            
             try
             {
-                _context.Music.Add(contact);
+                _context.Songs.Add(Song);
                 return true;
             }
             catch (Exception ex)
@@ -57,11 +67,11 @@ namespace MusicPlayerAPI.BusinessLogic
                 return false;
             }
         }
-        public bool UpdateContact(Music contact)
+        public bool UpdateSong(Songs Song)
         {
             try
             {
-                _context.Music.Update(contact);
+                _context.Songs.Update(Song);
                 return true;
             }
             catch (Exception ex)
@@ -70,11 +80,12 @@ namespace MusicPlayerAPI.BusinessLogic
                 return false;
             }
         }
-        public bool RemoveContact(Music contact)
+
+        public bool RemoveSong(Songs Song)
         {
             try
             {
-                _context.Music.Remove(contact);
+                _context.Songs.Remove(Song);
                 return true;
             }
             catch (Exception ex)
@@ -82,7 +93,6 @@ namespace MusicPlayerAPI.BusinessLogic
                 Console.WriteLine(ex);
                 return false;
             }
-            
         }
     }
 }
