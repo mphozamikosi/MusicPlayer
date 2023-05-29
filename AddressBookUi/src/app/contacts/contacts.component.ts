@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Contacts } from '../shared/contacts.model';
+import { Music } from '../shared/contacts.model';
 import { ContactsService } from '../shared/contacts.service';
 import { ToastrService } from 'ngx-toastr';
 import { ViewChild } from '@angular/core';
@@ -16,7 +16,7 @@ export class ContactsComponent implements OnInit {
 
   searchText: any;
   p: number = 1;
-  csvRecords: Contacts[] = [];
+  csvRecords: Music[] = [];
   header: boolean = true;
   data: any;
   constructor(public service: ContactsService, private toastr:ToastrService, private ngxCsvParser: NgxCsvParser) { }
@@ -25,7 +25,7 @@ export class ContactsComponent implements OnInit {
     this.service.refreshList();
   }
 
-  populateForm(selectedRecord: Contacts){
+  populateForm(selectedRecord: Music){
     this.service.formData = Object.assign({}, selectedRecord);
   }
 

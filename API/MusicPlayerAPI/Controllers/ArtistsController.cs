@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
+using MusicPlayerAPI.Interfaces;
 
 namespace ArtistsPlayerAPI.Controllers
 {
@@ -14,23 +15,25 @@ namespace ArtistsPlayerAPI.Controllers
     [ApiController]
     public class ArtistsController : ControllerBase
     {
+        private readonly IArtists _Artists;
         private readonly MusicPlayerContext _context;
 
-        public ArtistsController(MusicPlayerContext context)
+        public ArtistsController(MusicPlayerContext context, IArtists artists)
         {
             _context = context;
+            _Artists = artists;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Artists>>> GetArtists()
         {
-            return await _context.Artists.ToListAsync();
+            return await _Artists.GetArtists();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Artists>> GetArtists(int id)
         {
-            var Artists = await _context.Artists.FindAsync(id);
+            var Artists = await _Artists.GetArtist(id);
 
             if (Artists == null)
             {
@@ -44,11 +47,13 @@ namespace ArtistsPlayerAPI.Controllers
         public async Task<IActionResult> PutArtists(int id, Artists Artists)
         {
             Artists.UpdatedDate = DateTime.Now;
+            Artists.Id = id;
             if (id != Artists.Id)
             {
                 return BadRequest();
             }
 
+            _Artists.UpdateArtist(Artists);
             //_context.Entry(Artists).State = EntityState.Modified;
 
             //try
@@ -74,10 +79,9 @@ namespace ArtistsPlayerAPI.Controllers
         public async Task<ActionResult<Artists>> PostArtists(Artists Artists)
         {
             //Artists.Id = 3;
-            Artists.UpdatedDate = DateTime.Now;
-            _context.Artists.Add(Artists);
             try
             {
+                _Artists.AddArtist(Artists);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
@@ -95,39 +99,6 @@ namespace ArtistsPlayerAPI.Controllers
             return CreatedAtAction("GetArtists", new { id = Artists.Id }, Artists);
         }
 
-        [Route("PostMultipleArtists")]
-        [HttpPost]
-        public async Task<ActionResult<Artists>> PostMultipleArtists(Artists[] Artists)
-        {
-            //Artists.Id = 3;
-            foreach (var item in Artists)
-            {
-                item.UpdatedDate = DateTime.Now;
-                _context.Artists.Add(item);
-            }
-
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    foreach (var item in Artists)
-            //    {
-            //        if (ArtistsExists(item.Id))
-            //        {
-            //            return Conflict();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-
-            //}
-            return NoContent();
-        }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Artists>> DeleteArtists(int id)

@@ -5,21 +5,20 @@ using MusicPlayerAPI.Models;
 
 namespace MusicPlayerAPI.BusinessLogic
 {
-    public class GenreLogic
+    public class GenreLogic : IGenres
     {
         private readonly MusicPlayerContext _context;
-        private readonly IMusic _music;
 
-        public GenreLogic(MusicPlayerContext context, IMusic music)
+        public GenreLogic(MusicPlayerContext context)
         {
             _context = context;
-            _music = music;
         }
-        public List<Genres> GetGenres()
+
+        public Task<List<Genres>> GetGenres()
         {
             try
             {
-                var Genres = _context.Genres.Select(x => x).ToList();
+                var Genres = _context.Genres.ToListAsync();
                 return Genres;
             }
             catch (Exception ex)
@@ -28,11 +27,11 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public Genres GetGenre(int id)
+        public Task<Genres> GetGenre(int id)
         {
             try
             {
-                var Genre = _context.Genres.Where(x => x.Id == id).Select(x => x).First();
+                var Genre = _context.Genres.Where(x => x.Id == id).Select(x => x).FirstAsync();
                 return Genre;
             }
             catch (Exception ex)
@@ -41,22 +40,38 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        //public Genres AddGenre(int id)
+
+        public Genres GetGenre(string songName)
+        {
+            try
+            {
+                var Genre = _context.Genres.Where(x => x.GenreName.Contains(songName)).Select(x => x).First();
+                return Genre;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        //public bool AddGenre(Genres Genre)
         //{
         //    try
         //    {
-        //        var Genre = _context.Genres.Where(x => x.Id == id).Select(x => x).First();
-        //        return Genre;
+        //        Genre.CreatedDate = DateTime.Now;
+        //        _context.Genres.Add(Genre);
+        //        _context.SaveChanges();
+        //        return true;
         //    }
         //    catch (Exception ex)
         //    {
         //        Console.WriteLine(ex);
-        //        return null;
+        //        throw;
         //    }
         //}
         public bool AddGenre(Genres Genre)
         {
-
+            Genre.CreatedDate = DateTime.Now;
             try
             {
                 _context.Genres.Add(Genre);
@@ -65,7 +80,7 @@ namespace MusicPlayerAPI.BusinessLogic
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return false;
+                throw;
             }
         }
         public bool UpdateGenre(Genres Genre)
@@ -73,20 +88,7 @@ namespace MusicPlayerAPI.BusinessLogic
             try
             {
                 _context.Genres.Update(Genre);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-        }
-
-        public bool RemoveGenre(Genres Genre)
-        {
-            try
-            {
-                _context.Genres.Remove(Genre);
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception ex)

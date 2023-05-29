@@ -7,49 +7,54 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
+using MusicPlayerAPI.Interfaces;
 
 namespace SongsPlayerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SongsController : ControllerBase
+    public class GenresController : ControllerBase
     {
+        private readonly IGenres _Genres;
         private readonly MusicPlayerContext _context;
 
-        public SongsController(MusicPlayerContext context)
+        public GenresController(MusicPlayerContext context, IGenres Genres)
         {
             _context = context;
+            _Genres = Genres;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Songs>>> GetSongs()
+        public async Task<ActionResult<IEnumerable<Genres>>> GetGenres()
         {
-            return await _context.Songs.ToListAsync();
+            return await _Genres.GetGenres();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Songs>> GetSongs(int id)
+        public async Task<ActionResult<Genres>> GetGenres(int id)
         {
-            var Songs = await _context.Songs.FindAsync(id);
+            var Genres = await _Genres.GetGenre(id);
 
-            if (Songs == null)
+            if (Genres == null)
             {
                 return NotFound();
             }
 
-            return Songs;
+            return Genres;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSongs(int id, Songs Songs)
+        public async Task<IActionResult> PutGenres(int id, Genres Genres)
         {
-            Songs.UpdatedDate = DateTime.Now;
-            if (id != Songs.Id)
+            Genres.UpdatedDate = DateTime.Now;
+            Genres.Id = id;
+            if (id != Genres.Id)
             {
                 return BadRequest();
             }
 
-            //_context.Entry(Songs).State = EntityState.Modified;
+            _Genres.UpdateGenre(Genres);
+            //_context.Entry(Genres).State = EntityState.Modified;
 
             //try
             //{
@@ -57,7 +62,7 @@ namespace SongsPlayerAPI.Controllers
             //}
             //catch (DbUpdateConcurrencyException)
             //{
-            //    if (!SongsExists(id))
+            //    if (!GenresExists(id))
             //    {
             //        return NotFound();
             //    }
@@ -71,18 +76,17 @@ namespace SongsPlayerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Songs>> PostSongs(Songs Songs)
+        public async Task<ActionResult<Genres>> PostGenres(Genres Genres)
         {
-            //Songs.Id = 3;
-            Songs.UpdatedDate = DateTime.Now;
-            _context.Songs.Add(Songs);
+            //Genres.Id = 3;
             try
             {
+                _Genres.AddGenre(Genres);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (SongsExists(Songs.Id))
+                if (GenresExists(Genres.Id))
                 {
                     return Conflict();
                 }
@@ -92,61 +96,28 @@ namespace SongsPlayerAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetSongs", new { id = Songs.Id }, Songs);
+            return CreatedAtAction("GetGenres", new { id = Genres.Id }, Genres);
         }
 
-        [Route("PostMultipleSongs")]
-        [HttpPost]
-        public async Task<ActionResult<Songs>> PostMultipleSongs(Songs[] Songs)
-        {
-            //Songs.Id = 3;
-            foreach (var item in Songs)
-            {
-                item.UpdatedDate = DateTime.Now;
-                _context.Songs.Add(item);
-            }
-
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    foreach (var item in Songs)
-            //    {
-            //        if (SongsExists(item.Id))
-            //        {
-            //            return Conflict();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-
-            //}
-            return NoContent();
-        }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Songs>> DeleteSongs(int id)
+        public async Task<ActionResult<Genres>> DeleteGenres(int id)
         {
-            var Songs = await _context.Songs.FindAsync(id);
-            if (Songs == null)
+            var Genres = await _context.Genres.FindAsync(id);
+            if (Genres == null)
             {
                 return NotFound();
             }
 
-            _context.Songs.Remove(Songs);
+            _context.Genres.Remove(Genres);
             await _context.SaveChangesAsync();
 
-            return Songs;
+            return Genres;
         }
 
-        private bool SongsExists(int id)
+        private bool GenresExists(int id)
         {
-            return _context.Songs.Any(e => e.Id == id);
+            return _context.Genres.Any(e => e.Id == id);
         }
     }
 }

@@ -4,22 +4,20 @@ using MusicPlayerAPI.Models;
 
 namespace MusicPlayerAPI.BusinessLogic
 {
-    public class SongLogic
+    public class SongLogic : ISongs
     {
         private readonly MusicPlayerContext _context;
-        private readonly IMusic _music;
 
-        public SongLogic(MusicPlayerContext context, IMusic music)
+        public SongLogic(MusicPlayerContext context)
         {
             _context = context;
-            _music = music;
         }
 
-        public List<Songs> GetSongs()
+        public Task<List<Songs>> GetSongs()
         {
             try
             {
-                var Songs = _context.Songs.Select(x => x).ToList();
+                var Songs = _context.Songs.ToListAsync();
                 return Songs;
             }
             catch (Exception ex)
@@ -28,11 +26,11 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public Songs GetSong(int id)
+        public Task<Songs> GetSong(int id)
         {
             try
             {
-                var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).First();
+                var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).FirstAsync();
                 return Song;
             }
             catch (Exception ex)
@@ -41,21 +39,38 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        //public Songs AddSong(int id)
+
+        public Songs GetSong(string songName)
+        {
+            try
+            {
+                var Song = _context.Songs.Where(x => x.SongName.Contains(songName)).Select(x => x).First();
+                return Song;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        //public bool AddSong(Songs Song)
         //{
         //    try
         //    {
-        //        var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).First();
-        //        return Song;
+        //        Song.CreatedDate = DateTime.Now;
+        //        _context.Songs.Add(Song);
+        //        _context.SaveChanges();
+        //        return true;
         //    }
         //    catch (Exception ex)
         //    {
         //        Console.WriteLine(ex);
-        //        return null;
+        //        throw;
         //    }
         //}
         public bool AddSong(Songs Song)
         {
+            Song.CreatedDate = DateTime.Now;
             try
             {
                 _context.Songs.Add(Song);
@@ -64,7 +79,7 @@ namespace MusicPlayerAPI.BusinessLogic
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return false;
+                throw;
             }
         }
         public bool UpdateSong(Songs Song)
@@ -72,20 +87,7 @@ namespace MusicPlayerAPI.BusinessLogic
             try
             {
                 _context.Songs.Update(Song);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-        }
-
-        public bool RemoveSong(Songs Song)
-        {
-            try
-            {
-                _context.Songs.Remove(Song);
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception ex)

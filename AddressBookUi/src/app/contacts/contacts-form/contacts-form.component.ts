@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Contacts } from 'src/app/shared/contacts.model';
+import { Music } from 'src/app/shared/contacts.model';
 import { ContactsService } from 'src/app/shared/contacts.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class ContactsFormComponent implements OnInit {
 
   resetForm(form:NgForm){
     form.form.reset();
-    this.service.formData =new Contacts();
+    this.service.formData =new Music();
   }
 
   insertContact(form:NgForm){

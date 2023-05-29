@@ -1,4 +1,4 @@
-export class Contacts {
+export class Music {
     id: number=0;
     firstName: string='';
     surname:string='';

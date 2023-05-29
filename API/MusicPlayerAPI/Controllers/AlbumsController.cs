@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
+using MusicPlayerAPI.Interfaces;
 
 namespace AlbumsPlayerAPI.Controllers
 {
@@ -14,23 +15,25 @@ namespace AlbumsPlayerAPI.Controllers
     [ApiController]
     public class AlbumsController : ControllerBase
     {
+        private readonly IAlbums _Albums;
         private readonly MusicPlayerContext _context;
 
-        public AlbumsController(MusicPlayerContext context)
+        public AlbumsController(MusicPlayerContext context, IAlbums Albums)
         {
             _context = context;
+            _Albums = Albums;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Albums>>> GetAlbums()
         {
-            return await _context.Albums.ToListAsync();
+            return await _Albums.GetAlbums();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Albums>> GetAlbums(int id)
         {
-            var Albums = await _context.Albums.FindAsync(id);
+            var Albums = await _Albums.GetAlbum(id);
 
             if (Albums == null)
             {
@@ -44,11 +47,13 @@ namespace AlbumsPlayerAPI.Controllers
         public async Task<IActionResult> PutAlbums(int id, Albums Albums)
         {
             Albums.UpdatedDate = DateTime.Now;
+            Albums.Id = id;
             if (id != Albums.Id)
             {
                 return BadRequest();
             }
 
+            _Albums.UpdateAlbum(Albums);
             //_context.Entry(Albums).State = EntityState.Modified;
 
             //try
@@ -74,10 +79,9 @@ namespace AlbumsPlayerAPI.Controllers
         public async Task<ActionResult<Albums>> PostAlbums(Albums Albums)
         {
             //Albums.Id = 3;
-            Albums.UpdatedDate = DateTime.Now;
-            _context.Albums.Add(Albums);
             try
             {
+                _Albums.AddAlbum(Albums);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
@@ -95,39 +99,6 @@ namespace AlbumsPlayerAPI.Controllers
             return CreatedAtAction("GetAlbums", new { id = Albums.Id }, Albums);
         }
 
-        [Route("PostMultipleAlbums")]
-        [HttpPost]
-        public async Task<ActionResult<Albums>> PostMultipleAlbums(Albums[] Albums)
-        {
-            //Albums.Id = 3;
-            foreach (var item in Albums)
-            {
-                item.UpdatedDate = DateTime.Now;
-                _context.Albums.Add(item);
-            }
-
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    foreach (var item in Albums)
-            //    {
-            //        if (AlbumsExists(item.Id))
-            //        {
-            //            return Conflict();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-
-            //}
-            return NoContent();
-        }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Albums>> DeleteAlbums(int id)

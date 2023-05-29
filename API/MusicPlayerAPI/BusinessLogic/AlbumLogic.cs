@@ -1,25 +1,24 @@
-﻿using MusicPlayerAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicPlayerAPI.Data;
 using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.Models;
 
 namespace MusicPlayerAPI.BusinessLogic
 {
-    public class AlbumLogic
+    public class AlbumLogic : IAlbums
     {
         private readonly MusicPlayerContext _context;
-        private readonly IMusic _music;
 
-        public AlbumLogic(MusicPlayerContext context, IMusic music)
+        public AlbumLogic(MusicPlayerContext context)
         {
             _context = context;
-            _music = music;
         }
 
-        public List<Albums> GetAlbums()
+        public Task<List<Albums>> GetAlbums()
         {
             try
             {
-                var Albums = _context.Albums.Select(x => x).ToList();
+                var Albums = _context.Albums.ToListAsync();
                 return Albums;
             }
             catch (Exception ex)
@@ -28,11 +27,11 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public Albums GetAlbum(int id)
+        public Task<Albums> GetAlbum(int id)
         {
             try
             {
-                var Album = _context.Albums.Where(x => x.Id == id).Select(x => x).First();
+                var Album = _context.Albums.Where(x => x.Id == id).Select(x => x).FirstAsync();
                 return Album;
             }
             catch (Exception ex)
@@ -41,22 +40,38 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        //public Albums AddAlbum(int id)
+
+        public Albums GetAlbum(string songName)
+        {
+            try
+            {
+                var Album = _context.Albums.Where(x => x.AlbumName.Contains(songName)).Select(x => x).First();
+                return Album;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        //public bool AddAlbum(Albums Album)
         //{
         //    try
         //    {
-        //        var Album = _context.Albums.Where(x => x.Id == id).Select(x => x).First();
-        //        return Album;
+        //        Album.CreatedDate = DateTime.Now;
+        //        _context.Albums.Add(Album);
+        //        _context.SaveChanges();
+        //        return true;
         //    }
         //    catch (Exception ex)
         //    {
         //        Console.WriteLine(ex);
-        //        return null;
+        //        throw;
         //    }
         //}
         public bool AddAlbum(Albums Album)
         {
-
+            Album.CreatedDate = DateTime.Now;
             try
             {
                 _context.Albums.Add(Album);
@@ -65,7 +80,7 @@ namespace MusicPlayerAPI.BusinessLogic
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return false;
+                throw;
             }
         }
         public bool UpdateAlbum(Albums Album)
@@ -73,20 +88,7 @@ namespace MusicPlayerAPI.BusinessLogic
             try
             {
                 _context.Albums.Update(Album);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-        }
-
-        public bool RemoveAlbum(Albums Album)
-        {
-            try
-            {
-                _context.Albums.Remove(Album);
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception ex)

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Contacts } from './contacts.model';
+import { Music } from './contacts.model';
 import {HttpClient} from '@angular/common/http'
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -10,16 +10,16 @@ export class ContactsService {
 
   constructor(private http:HttpClient, private spinner: NgxSpinnerService) { }
 
-  formData:Contacts = new Contacts();
+  formData:Music = new Music();
   //formDataArray:Contacts[] = [];
-  readonly baseURL = 'https://localhost:44365/api/contacts'
-  list: Contacts[];
+  readonly baseURL = 'https://localhost:44333/api/music'
+  list: Music[];
   
   postContactDetails(){
     return this.http.post(this.baseURL, this.formData);
   }
 
-  postMultipleContactDetails(formDataArray:Contacts[]=[]){
+  postMultipleContactDetails(formDataArray:Music[]=[]){
     return this.http.post(this.baseURL + '/PostMultipleContacts', formDataArray);
   }
 
@@ -28,7 +28,7 @@ export class ContactsService {
   }
   
   refreshList(){
-    this.http.get(this.baseURL).toPromise().then(res => this.list = res as Contacts[])
+    this.http.get(this.baseURL).toPromise().then(res => this.list = res as Music[])
   }
 
   deleteContact(id:number){
