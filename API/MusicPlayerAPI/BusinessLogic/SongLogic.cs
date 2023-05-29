@@ -1,4 +1,5 @@
-﻿using MusicPlayerAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicPlayerAPI.Data;
 using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.Models;
 
