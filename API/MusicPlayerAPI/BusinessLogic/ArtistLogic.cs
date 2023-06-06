@@ -39,6 +39,7 @@ namespace MusicPlayerAPI.BusinessLogic
             }
             catch (Exception ex)
             {
+
                 Console.WriteLine(ex);
                 return null;
             }
