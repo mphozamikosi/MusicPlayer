@@ -8,10 +8,12 @@ namespace MusicPlayerAPI.BusinessLogic
     public class GenreLogic : IGenres
     {
         private readonly MusicPlayerContext _context;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public GenreLogic(MusicPlayerContext context)
+        public GenreLogic(MusicPlayerContext context, IDateTimeProvider dateTimeProvider)
         {
             _context = context;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public Task<List<Genres>> GetGenres()
@@ -71,7 +73,7 @@ namespace MusicPlayerAPI.BusinessLogic
         //}
         public bool AddGenre(Genres Genre)
         {
-            Genre.CreatedDate = DateTime.Now;
+            Genre.CreatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Genres.Add(Genre);
