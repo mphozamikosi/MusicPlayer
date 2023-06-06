@@ -9,17 +9,19 @@ namespace MusicPlayerAPI.BusinessLogic
     public class ArtistLogic : IArtists
     {
         private readonly MusicPlayerContext _context;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public ArtistLogic(MusicPlayerContext context)
+        public ArtistLogic(MusicPlayerContext context, IDateTimeProvider dateTimeProvider)
         {
             _context = context;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public Task<List<Artists>> GetArtists()
         {
             try
             {
-                var artists = _context.Artists.ToListAsync();
+                var artists = _context.Artists.Select(x => x).ToListAsync();
                 return artists;
             }
             catch (Exception ex)
@@ -32,7 +34,7 @@ namespace MusicPlayerAPI.BusinessLogic
         {
             try
             {
-                var artist = _context.Artists.Where(x => x.Id == id).Select(x => x).FirstAsync();
+                var artist = _context.Artists.Include(a => a.Albums).Where(x => x.Id == id).Select(x => x).FirstAsync();
                 return artist;
             }
             catch (Exception ex)
@@ -72,7 +74,7 @@ namespace MusicPlayerAPI.BusinessLogic
         //}
         public bool AddArtist(Artists artist)
         {
-            artist.CreatedDate = DateTime.Now;
+            artist.CreatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Artists.Add(artist);

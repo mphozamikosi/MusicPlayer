@@ -1,0 +1,27 @@
+<form novalidate #form="ngForm" (submit)="onSubmit(form)"> 
+    <input type="hidden" name="id" [value]="service.formData.id">
+    <div class="ui segment attached secondary inverted" style="border: none; background-image:  linear-gradient(135deg, rgb(24,42,115) 0%,rgb(33,138,174) 69%, rgb(32,167,172) 89%); text-align: center;"><i class="far fa-plus-square"></i>  Create/Edit Artist</div>
+    <div class="create mt-4">
+        <div class="form-group">
+            <label>ARTIST NAME</label>
+            <input required type="text" class="form-control form-control lg" placeholder="Artist Name" name="artistName" #artistName="ngModel" [(ngModel)]="service.formData.artistName" [class.invalid]="artistName.invalid && artistName.touched">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-info btn-lg col-md-12 m-auto" type="submit" (click)="toggleLoading()" [disabled]="form.invalid">SUBMIT</button>
+        </div>
+    </div>
+    <br/>
+    <div class="ui segment attached secondary inverted" style="border: none; background-image:  linear-gradient(135deg, rgb(24,42,115) 0%,rgb(33,138,174) 69%, rgb(32,167,172) 89%); text-align: center;">Artist's list</div>
+        <table class="table mt-3" id="albumTable">
+            <thead class="thead-light">
+                <tr>
+                    <th><i class="far fa-user"></i>Album Name&nbsp;<i class="fa fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="orderBy: key: reverse| paginate:{itemsPerPage:5, currentPage:p};">
+                    <td>{{service.formData.artistName}}</td>
+                </tr>
+            </tbody>
+        </table>
+</form>

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.BusinessLogic;
+using MusicPlayerAPI.Common;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,9 @@ builder.Services.AddScoped<IArtists, ArtistLogic>();
 builder.Services.AddScoped<IAlbums, AlbumLogic>();
 builder.Services.AddScoped<ISongs, SongLogic>();
 builder.Services.AddScoped<IGenres, GenreLogic>();
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 var app = builder.Build();
 //var services = scope.ServiceProvider;

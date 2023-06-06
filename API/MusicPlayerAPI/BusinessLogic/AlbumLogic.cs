@@ -8,17 +8,19 @@ namespace MusicPlayerAPI.BusinessLogic
     public class AlbumLogic : IAlbums
     {
         private readonly MusicPlayerContext _context;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public AlbumLogic(MusicPlayerContext context)
+        public AlbumLogic(MusicPlayerContext context, IDateTimeProvider dateTimeProvider)
         {
             _context = context;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public Task<List<Albums>> GetAlbums()
         {
             try
             {
-                var Albums = _context.Albums.ToListAsync();
+                var Albums = _context.Albums.Include(a => a.Artist).Include(s => s.Genre).ToListAsync();
                 return Albums;
             }
             catch (Exception ex)
@@ -71,7 +73,7 @@ namespace MusicPlayerAPI.BusinessLogic
         //}
         public bool AddAlbum(Albums Album)
         {
-            Album.CreatedDate = DateTime.Now;
+            Album.CreatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Albums.Add(Album);

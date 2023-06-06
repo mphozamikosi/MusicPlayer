@@ -1,0 +1,38 @@
+
+
+<div class="row" >
+    <div class="details ui segment col-md-4" style="float: left;">
+        <app-albums-form></app-albums-form>
+    </div>
+  
+    <div class="details ui segment col-md-8" style="float: right;">
+        <nav class="navbar">
+          <input class="form-control" type="text" name="albumName" [(ngModel)]="searchText" (ngModelChange)="Search()" placeholder="Enter album name to search!">
+        </nav>
+        <i class="fas fa-info-circle ">To edit, just click on any record then edit it on the left hand side.</i>
+        <br/>
+        <div class="ui segment attached secondary inverted" style="border: none; background-image:  linear-gradient(135deg, rgb(24,42,115) 0%,rgb(33,138,174) 69%, rgb(32,167,172) 89%); text-align: center;">Album's Songs</div>
+        <table class="table mt-3" id="albumTable">
+            <thead class="thead-light">
+                <tr>
+                    <th (click)="sort('albumName')"><i class="far fa-user"></i>Album Name&nbsp;<i class="fa fa-sort"></i></th>
+                    <th><i class="far fa-trash-alt"></i> Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let pd of service.list | orderBy: key: reverse| paginate:{itemsPerPage:5, currentPage:p};">
+                    <td (click)="populateForm(pd)">{{pd.albumName}}</td>
+                    <td>{{pd.artist.artistName}}</td>
+                    <td>
+                        <i (click)="onDelete(pd.id)" class="far fa-trash-alt fa-lg text-danger"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <pagination-controls (pageChange)="p= $event"></pagination-controls>
+    </div>
+    
+</div>
+
+
+

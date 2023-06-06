@@ -11,7 +11,31 @@ type="ball-scale-multiple"
   <h1 class="display-4 text-center">Mpho Music Player</h1>
 </div>
 <div class="container"> 
-  <app-contacts></app-contacts>
+  
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#">Artists</a>
+      <app-artists></app-artists>
+    </li>
+    <li>
+      <a href="#">Albums</a>
+      <app-albums></app-albums>
+    </li>
+    <li>
+      <a href="#">Songs</a>
+      <app-songs></app-songs>
+    </li>
+  </ul>
+  <div class="widget wdarkblue">
+    <div class="widget-head" data-cc-widget-header title="Test">
+      <div class="widget wlightblue">
+        <div class="widget-head" data-cc-widget-header title="Required Documents" allowCollapse="true">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <app-genres></app-genres>
 </div>
 
 <div class="ui inverted vertical footer segment">

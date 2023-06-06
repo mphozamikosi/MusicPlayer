@@ -8,10 +8,12 @@ namespace MusicPlayerAPI.BusinessLogic
     public class SongLogic : ISongs
     {
         private readonly MusicPlayerContext _context;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public SongLogic(MusicPlayerContext context)
+        public SongLogic(MusicPlayerContext context, IDateTimeProvider dateTimeProvider)
         {
             _context = context;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public Task<List<Songs>> GetSongs()
@@ -71,7 +73,7 @@ namespace MusicPlayerAPI.BusinessLogic
         //}
         public bool AddSong(Songs Song)
         {
-            Song.CreatedDate = DateTime.Now;
+            Song.CreatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Songs.Add(Song);
