@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
 using MusicPlayerAPI.Interfaces;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace ArtistsPlayerAPI.Controllers
 {
@@ -30,7 +33,8 @@ namespace ArtistsPlayerAPI.Controllers
             return await _Artists.GetArtists();
         }
 
-        [HttpGet("{id}")]
+        [Route("GetArtist")]
+        [HttpGet]
         public async Task<ActionResult<Artists>> GetArtists(int id)
         {
             var Artists = await _Artists.GetArtist(id);
@@ -42,16 +46,11 @@ namespace ArtistsPlayerAPI.Controllers
 
             return Artists;
         }
-
+        [Route("EditArtist")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArtists(int id, Artists Artists)
+        public async Task<IActionResult> PutArtists(Artists Artists)
         {
             Artists.UpdatedDate = DateTime.Now;
-            Artists.Id = id;
-            if (id != Artists.Id)
-            {
-                return BadRequest();
-            }
 
             _Artists.UpdateArtist(Artists);
             //_context.Entry(Artists).State = EntityState.Modified;
@@ -75,18 +74,20 @@ namespace ArtistsPlayerAPI.Controllers
             return NoContent();
         }
 
+        [Route("CreateArtist")]
         [HttpPost]
-        public async Task<ActionResult<Artists>> PostArtists(Artists Artists)
+        public async Task<ActionResult<Artists>> PostArtists(object artist)
         {
             //Artists.Id = 3;
+            var artistObj = JsonConvert.DeserializeObject<Artists>(artist.ToString());
             try
             {
-                _Artists.AddArtist(Artists);
+                _Artists.AddArtist(artistObj);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ArtistsExists(Artists.Id))
+                if (ArtistsExists(artistObj.Id))
                 {
                     return Conflict();
                 }
@@ -96,11 +97,11 @@ namespace ArtistsPlayerAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetArtists", new { id = Artists.Id }, Artists);
+            return CreatedAtAction("GetArtists", new { id = artistObj.Id }, artistObj);
         }
 
-
-        [HttpDelete("{id}")]
+        [Route("DeleteArtist")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Artists>> DeleteArtists(int id)
         {
             var Artists = await _context.Artists.FindAsync(id);
@@ -115,6 +116,19 @@ namespace ArtistsPlayerAPI.Controllers
             return Artists;
         }
 
+        [Route("SearchArtists")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Artists>>> SearchArtists(string artistName)
+        {
+            var Artists = await _Artists.SearchArtists(artistName);
+
+            if (Artists == null)
+            {
+                return NotFound();
+            }
+
+            return Artists;
+        }
         private bool ArtistsExists(int id)
         {
             return _context.Artists.Any(e => e.Id == id);

@@ -7,6 +7,6 @@
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         //public ICollection<Albums>? Albums { get; set; }
-        //public ICollection<Songs>? Songs { get; set; }
-    }
+        //public ICollection<Songs>? Songs { get; set; }
+    }
 }

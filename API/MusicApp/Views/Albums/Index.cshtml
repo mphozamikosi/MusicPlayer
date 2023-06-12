@@ -1,0 +1,73 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<MusicApp.Models.AlbumsViewModel>
+@{
+    ViewBag.Title = "ALBUMS";
+}
+
+<h2>@ViewBag.Title</h2>
+<p>
+    <a class="btn btn-outline-success" asp-action="Create">Create Album</a>
+</p>
+<br />
+@using (Html.BeginForm("Search", "Albums", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <label class="col-md-2 control-label">Search Album</label>
+    <div class="col-md-10">
+        <input type="text" name="SearchText" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-outline-danger" name="decision" value="Test">SEARCH</button>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ALBUM NAME
+            </th>
+            <th>
+                ARTIST
+            </th>
+            <th>
+                GENRE
+            </th>
+            <th>
+                CREATED DATE
+            </th>
+            <th>
+                UPDATED DATE
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AlbumName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Artist.ArtistName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre.GenreName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdatedDate)
+                </td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">VIEW</a>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">EDIT</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">DELETE</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

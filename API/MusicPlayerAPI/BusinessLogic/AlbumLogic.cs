@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MusicPlayerAPI.Common;
 using MusicPlayerAPI.Data;
 using MusicPlayerAPI.Interfaces;
 using MusicPlayerAPI.Models;
@@ -14,13 +15,14 @@ namespace MusicPlayerAPI.BusinessLogic
         {
             _context = context;
             _dateTimeProvider = dateTimeProvider;
+            //_fileUploadHelper = fileUploadHelper;
         }
 
         public Task<List<Albums>> GetAlbums()
         {
             try
             {
-                var Albums = _context.Albums.Include(a => a.Artist).Include(s => s.Genre).ToListAsync();
+                var Albums = _context.Albums.Include(a => a.Artist).Include(s => s.Genre).Include(s => s.Songs).ToListAsync();
                 return Albums;
             }
             catch (Exception ex)
@@ -29,11 +31,12 @@ namespace MusicPlayerAPI.BusinessLogic
                 return null;
             }
         }
-        public Task<Albums> GetAlbum(int id)
+        public Albums GetAlbum(int id)
         {
             try
             {
-                var Album = _context.Albums.Where(x => x.Id == id).Select(x => x).FirstAsync();
+                var Album = _context.Albums.Where(x => x.Id == id).Include(a => a.Artist).Include(s => s.Genre).Include(s => s.Songs).Select(x => x).FirstOrDefault();
+                //Album.Photo = _fileUploadHelper.GetSavedImage(Album.Photo);
                 return Album;
             }
             catch (Exception ex)
@@ -74,6 +77,8 @@ namespace MusicPlayerAPI.BusinessLogic
         public bool AddAlbum(Albums Album)
         {
             Album.CreatedDate = _dateTimeProvider.Now;
+            Album.UpdatedDate = _dateTimeProvider.Now;
+            //Album.Photo = _fileUploadHelper.SaveAlbumFile(file);
             try
             {
                 _context.Albums.Add(Album);
@@ -99,5 +104,20 @@ namespace MusicPlayerAPI.BusinessLogic
                 return false;
             }
         }
+
+        public Task<List<Albums>> SearchAlbums(string albumName)
+        {
+            try
+            {
+                var artists = _context.Albums.Where(n => n.AlbumName.ToLower().Contains(albumName.ToLower())).Select(x => x).ToListAsync();
+                return artists;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using MusicPlayerAPI.Models;
 using MusicPlayerAPI.Data;
 using MusicPlayerAPI.Interfaces;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
 
-namespace SongsPlayerAPI.Controllers
+namespace GenresPlayerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -30,7 +33,8 @@ namespace SongsPlayerAPI.Controllers
             return await _Genres.GetGenres();
         }
 
-        [HttpGet("{id}")]
+        [Route("GetGenre")]
+        [HttpGet]
         public async Task<ActionResult<Genres>> GetGenres(int id)
         {
             var Genres = await _Genres.GetGenre(id);
@@ -42,16 +46,11 @@ namespace SongsPlayerAPI.Controllers
 
             return Genres;
         }
-
+        [Route("EditGenre")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGenres(int id, Genres Genres)
+        public async Task<IActionResult> PutGenres(Genres Genres)
         {
             Genres.UpdatedDate = DateTime.Now;
-            Genres.Id = id;
-            if (id != Genres.Id)
-            {
-                return BadRequest();
-            }
 
             _Genres.UpdateGenre(Genres);
             //_context.Entry(Genres).State = EntityState.Modified;
@@ -75,18 +74,20 @@ namespace SongsPlayerAPI.Controllers
             return NoContent();
         }
 
+        [Route("AddGenre")]
         [HttpPost]
-        public async Task<ActionResult<Genres>> PostGenres(Genres Genres)
+        public async Task<ActionResult<Genres>> PostGenres(object Genre)
         {
             //Genres.Id = 3;
+            var GenreObj = JsonConvert.DeserializeObject<Genres>(Genre.ToString());
             try
             {
-                _Genres.AddGenre(Genres);
+                _Genres.AddGenre(GenreObj);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (GenresExists(Genres.Id))
+                if (GenresExists(GenreObj.Id))
                 {
                     return Conflict();
                 }
@@ -96,11 +97,11 @@ namespace SongsPlayerAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetGenres", new { id = Genres.Id }, Genres);
+            return CreatedAtAction("GetGenres", new { id = GenreObj.Id }, GenreObj);
         }
 
-
-        [HttpDelete("{id}")]
+        [Route("DeleteGenre")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Genres>> DeleteGenres(int id)
         {
             var Genres = await _context.Genres.FindAsync(id);
@@ -111,6 +112,20 @@ namespace SongsPlayerAPI.Controllers
 
             _context.Genres.Remove(Genres);
             await _context.SaveChangesAsync();
+
+            return Genres;
+        }
+
+        [Route("SearchGenres")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Genres>>> SearchGenres(string GenreName)
+        {
+            var Genres = await _Genres.SearchGenres(GenreName);
+
+            if (Genres == null)
+            {
+                return NotFound();
+            }
 
             return Genres;
         }

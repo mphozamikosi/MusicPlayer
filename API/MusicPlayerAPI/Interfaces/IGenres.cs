@@ -10,8 +10,9 @@ namespace MusicPlayerAPI.Interfaces
         public Genres GetGenre(string GenreName);
         public bool AddGenre(Genres Genres);
         public bool UpdateGenre(Genres Genre);
+        public Task<List<Genres>> SearchGenres(string GenreName);
         #endregion
 
 
-    }
+    }
 }

@@ -1,0 +1,27 @@
+﻿@model MusicApp.Models.ArtistsViewModel
+@{
+    ViewBag.Title = "CREATE ARTIST";
+}
+
+<h1>
+    @ViewBag.Title
+</h1>
+
+@using (Html.BeginForm("Create", "Artists", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="form-group">
+        <label class="col-md-2 control-label">Artist Name</label>
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.ArtistName, new {@class = "form-control"})
+        </div>
+        <span asp-validation-for="ArtistName" class="text-danger"></span>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-success" value="Submit" />
+                <a class="btn btn-outline-dark" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+
+    </div>
+}

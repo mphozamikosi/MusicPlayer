@@ -20,7 +20,7 @@ namespace MusicPlayerAPI.BusinessLogic
         {
             try
             {
-                var Songs = _context.Songs.ToListAsync();
+                var Songs = _context.Songs.Include(a => a.Album).ThenInclude(a => a.Artist).ToListAsync();
                 return Songs;
             }
             catch (Exception ex)
@@ -33,7 +33,7 @@ namespace MusicPlayerAPI.BusinessLogic
         {
             try
             {
-                var Song = _context.Songs.Where(x => x.Id == id).Select(x => x).FirstAsync();
+                var Song = _context.Songs.Include(a => a.Album).ThenInclude(a => a.Artist).Where(x => x.Id == id).Select(x => x).FirstAsync();
                 return Song;
             }
             catch (Exception ex)
@@ -74,6 +74,7 @@ namespace MusicPlayerAPI.BusinessLogic
         public bool AddSong(Songs Song)
         {
             Song.CreatedDate = _dateTimeProvider.Now;
+            Song.UpdatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Songs.Add(Song);
@@ -97,6 +98,19 @@ namespace MusicPlayerAPI.BusinessLogic
             {
                 Console.WriteLine(ex);
                 return false;
+            }
+        }
+        public Task<List<Songs>> SearchSongs(string songName)
+        {
+            try
+            {
+                var songs = _context.Songs.Where(n => n.SongName.ToLower().Contains(songName.ToLower())).Select(x => x).ToListAsync();
+                return songs;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
             }
         }
     }

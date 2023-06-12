@@ -11,7 +11,8 @@ namespace MusicPlayerAPI.Interfaces
         public Artists GetArtist(string artistName);
         public bool AddArtist(Artists artists);
         public bool UpdateArtist(Artists artist);
+        public Task<List<Artists>> SearchArtists(string artistName);
         #endregion
 
-    }
+    }
 }

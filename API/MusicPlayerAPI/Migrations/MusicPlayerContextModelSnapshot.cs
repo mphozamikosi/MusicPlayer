@@ -22,43 +22,6 @@ namespace MusicPlayerAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Models.Music", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Cel")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Tel")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("UpdatedDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Music", (string)null);
-                });
-
             modelBuilder.Entity("MusicPlayerAPI.Models.Albums", b =>
                 {
                     b.Property<int>("Id")
@@ -79,6 +42,10 @@ namespace MusicPlayerAPI.Migrations
 
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PhotoLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -138,6 +105,43 @@ namespace MusicPlayerAPI.Migrations
                     b.ToTable("Genres", (string)null);
                 });
 
+            modelBuilder.Entity("MusicPlayerAPI.Models.Music", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cel")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Tel")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("UpdatedDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Music", (string)null);
+                });
+
             modelBuilder.Entity("MusicPlayerAPI.Models.Songs", b =>
                 {
                     b.Property<int>("Id")
@@ -161,9 +165,6 @@ namespace MusicPlayerAPI.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GenresId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SongName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -177,8 +178,6 @@ namespace MusicPlayerAPI.Migrations
 
                     b.HasIndex("ArtistsId");
 
-                    b.HasIndex("GenresId");
-
                     b.ToTable("Songs", (string)null);
                 });
 
@@ -191,7 +190,7 @@ namespace MusicPlayerAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("MusicPlayerAPI.Models.Genres", "Genre")
-                        .WithMany("Albums")
+                        .WithMany()
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -204,7 +203,7 @@ namespace MusicPlayerAPI.Migrations
             modelBuilder.Entity("MusicPlayerAPI.Models.Songs", b =>
                 {
                     b.HasOne("MusicPlayerAPI.Models.Albums", "Album")
-                        .WithMany()
+                        .WithMany("Songs")
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -213,21 +212,15 @@ namespace MusicPlayerAPI.Migrations
                         .WithMany("Songs")
                         .HasForeignKey("ArtistsId");
 
-                    b.HasOne("MusicPlayerAPI.Models.Genres", null)
-                        .WithMany("Songs")
-                        .HasForeignKey("GenresId");
-
                     b.Navigation("Album");
                 });
 
-            modelBuilder.Entity("MusicPlayerAPI.Models.Artists", b =>
+            modelBuilder.Entity("MusicPlayerAPI.Models.Albums", b =>
                 {
-                    b.Navigation("Albums");
-
                     b.Navigation("Songs");
                 });
 
-            modelBuilder.Entity("MusicPlayerAPI.Models.Genres", b =>
+            modelBuilder.Entity("MusicPlayerAPI.Models.Artists", b =>
                 {
                     b.Navigation("Albums");
 

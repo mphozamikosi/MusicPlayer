@@ -27,8 +27,10 @@ builder.Services.AddScoped<IGenres, GenreLogic>();
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+app.MapHealthChecks("/health");
 //var services = scope.ServiceProvider;
 try
 {
@@ -47,7 +49,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors(options =>
-            options.WithOrigins("http://localhost:4200")
+            options.WithOrigins("http://localhost:7252")
             .AllowAnyMethod()
             .AllowAnyHeader());
 app.UseHttpsRedirection();
