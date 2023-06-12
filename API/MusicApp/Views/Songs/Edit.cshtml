@@ -1,0 +1,30 @@
+﻿@model MusicApp.Models.SongsViewModel
+@{
+    ViewBag.Title = "EDIT SONG";
+}
+
+<h1>
+    @ViewBag.Title
+</h1>
+
+@using (Html.BeginForm("Edit", "Songs", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.SongName, new {@class = "col-md-2 control-label"})
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.SongName, new {@class = "form-control"})
+        </div>
+        <br />
+        @Html.LabelFor(m => m.SelectedAlbum, new {@class = "col-md-2 control-label"})
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            @Html.DropDownListFor(model => model.SelectedAlbum, ViewBag.Albums as SelectList,"--Select Album--", new { @class = "form-control"})
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-success" value="Submit" />
+                <a class="btn btn-outline-dark" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+}

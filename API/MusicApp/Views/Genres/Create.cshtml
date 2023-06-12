@@ -1,0 +1,26 @@
+﻿@model MusicApp.Models.GenresViewModel
+@{
+    ViewBag.Title = "CREATE GENRE";
+}
+
+<h1>
+    @ViewBag.Title
+</h1>
+
+@using (Html.BeginForm("Create", "Genres", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.GenreName, new {@class = "col-md-2 control-label"})
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.GenreName, new {@class = "form-control"})
+        </div>
+        <span asp-validation-for="GenreName" class="text-danger"></span>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-success" value="Submit" />
+                <a class="btn btn-outline-dark" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+}

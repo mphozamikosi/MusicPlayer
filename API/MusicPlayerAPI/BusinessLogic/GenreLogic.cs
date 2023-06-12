@@ -74,6 +74,7 @@ namespace MusicPlayerAPI.BusinessLogic
         public bool AddGenre(Genres Genre)
         {
             Genre.CreatedDate = _dateTimeProvider.Now;
+            Genre.UpdatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Genres.Add(Genre);
@@ -97,6 +98,19 @@ namespace MusicPlayerAPI.BusinessLogic
             {
                 Console.WriteLine(ex);
                 return false;
+            }
+        }
+        public Task<List<Genres>> SearchGenres(string genreName)
+        {
+            try
+            {
+                var artists = _context.Genres.Where(n => n.GenreName.ToLower().Contains(genreName.ToLower())).Select(x => x).ToListAsync();
+                return artists;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
             }
         }
     }

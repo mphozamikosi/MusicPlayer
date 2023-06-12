@@ -10,6 +10,7 @@ namespace MusicPlayerAPI.Interfaces
         public Songs GetSong(string SongName);
         public bool AddSong(Songs Songs);
         public bool UpdateSong(Songs Song);
+        public Task<List<Songs>> SearchSongs(string SongName);
         #endregion
-    }
+    }
 }

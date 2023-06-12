@@ -76,6 +76,7 @@ namespace MusicPlayerAPI.BusinessLogic
         public bool AddArtist(Artists artist)
         {
             artist.CreatedDate = _dateTimeProvider.Now;
+            artist.UpdatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Artists.Add(artist);
@@ -89,6 +90,7 @@ namespace MusicPlayerAPI.BusinessLogic
         }
         public bool UpdateArtist(Artists artist)
         {
+            artist.UpdatedDate = _dateTimeProvider.Now;
             try
             {
                 _context.Artists.Update(artist);
@@ -99,6 +101,19 @@ namespace MusicPlayerAPI.BusinessLogic
             {
                 Console.WriteLine(ex);
                 return false;
+            }
+        }
+        public Task<List<Artists>> SearchArtists(string artistName)
+        {
+            try
+            {
+                var artists = _context.Artists.Where(n => n.ArtistName.ToLower().Contains(artistName.ToLower())).Select(x => x).ToListAsync();
+                return artists;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
             }
         }
     }

@@ -1,0 +1,46 @@
+﻿@model MusicApp.Models.AlbumsViewModel
+@{
+    ViewBag.Title = "CREATE ALBUM";
+}
+
+<h1>
+    @ViewBag.Title
+</h1>
+
+<form method="post" enctype="multipart/form-data" asp-action="Create" asp-controller="Albums">
+    <div class="form-group">
+        @Html.LabelFor(m => m.AlbumName, new {@class = "col-md-2 control-label"})
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.AlbumName, new {@class = "form-control"})
+        </div>
+        <span asp-validation-for="AlbumName" class="text-danger"></span>
+        <br />
+        @Html.LabelFor(m => m.SelectedArtist, new {@class = "col-md-2 control-label"})
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            @Html.DropDownListFor(model => model.SelectedArtist, ViewBag.Artists as SelectList,"--Select Artist--", new { @class = "form-control"})
+        </div>
+        <span asp-validation-for="SelectedArtist" class="text-danger"></span>
+        <br />
+        @Html.LabelFor(m => m.SelectedGenre, new {@class = "col-md-2 control-label"})
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            @Html.DropDownListFor(model => model.SelectedGenre, ViewBag.Genres as SelectList,"--Select Genre--", new { @class = "form-control"})
+        </div>
+        <span asp-validation-for="SelectedGenre" class="text-danger"></span>
+        <br />
+        <div class="form-group">
+            <label asp-for="CoverPhoto" class="control-label"></label>
+            <div class="custom-file">
+                <input asp-for="CoverPhoto" class="custom-file-input" id="customFile">
+                @*<label class="custom-file-label" for="customFile">Choose file</label>*@
+            </div>
+            <span asp-validation-for="CoverPhoto" class="text-danger"></span>
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-success" value="Submit" />
+                <a class="btn btn-outline-dark" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</form>
